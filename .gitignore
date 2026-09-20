@@ -1,0 +1,20 @@
+# Generated binaries / release archives
+*.exe
+*.dll
+*.zip
+
+# Local CodexQuotaSwitch runtime state (never commit)
+secret/
+*.dpapi
+watcher-state.json
+watcher.log
+watcher-stop.request
+api-lease.json
+vscode-proxy-state.json
+real-codex-path.txt
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
