@@ -1,0 +1,9 @@
+Codex Provider Router 2.3.1
+
+Fix:
+- Corrected invalid C# escaping in the facade's injected model_provider argument.
+- The facade now constructs the quoted value using (char)34, avoiding nested
+  escape-sequence generation entirely.
+- Added an installer sanity check for the expected quote-safe source pattern.
+
+No routing behavior changed from 2.3.0.
