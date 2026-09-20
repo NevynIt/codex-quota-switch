@@ -1,0 +1,11 @@
+Codex Provider Router 2.3.2
+
+- VS Code app-server thread/list requests are now provider-agnostic:
+  modelProviders is rewritten to [] (Codex protocol meaning "all providers").
+- Existing subscription-created conversations remain visible while API routing
+  is active, and API-created conversations remain visible after returning to
+  subscription.
+- No rollout/history files are modified or migrated.
+- thread/start and thread/resume continue to use the currently routed provider.
+- CLI/TUI provider injection, quota watcher, reset tracking, DPAPI storage and
+  API leases are unchanged.
