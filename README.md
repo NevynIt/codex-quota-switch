@@ -1,4 +1,4 @@
-Version 2.3.2
+Version 2.3.1
 
 # Codex Provider Router + Quota Watcher — Windows
 
@@ -219,6 +219,7 @@ codex-route -ForceApi
 codex-route -ForceSubscription
 ```
 
+
 ## One facade for CLI and VS Code
 
 There is only one routing executable:
@@ -229,7 +230,8 @@ There is only one routing executable:
 
 The installer does two things with that same file:
 
-1. puts `%LOCALAPPDATA%\CodexQuotaSwitch\bin` first on your **user PATH**, so ordinary shell `codex` calls resolve to the facade;
+1. puts `%LOCALAPPDATA%\CodexQuotaSwitch\bin` first on your **user PATH**, so
+   ordinary shell `codex` calls resolve to the facade;
 2. sets VS Code's `chatgpt.cliExecutable` to that exact `codex.exe`.
 
 ```text
@@ -240,10 +242,17 @@ VS Code Codex ─────┘
 
 The facade detects how it was invoked:
 
-- **CLI/TUI mode:** it reads the currently routed provider and adds the equivalent of `-c 'model_provider="<provider>"'`, unless you explicitly supplied your own `model_provider`. This also makes Codex's internal `/resume` keep the routed provider.
-- **VS Code app-server mode:** it proxies JSON-RPC to the real Codex executable and injects `modelProvider` into `thread/start` and `thread/resume` when the extension did not explicitly provide one.
+- **CLI/TUI mode:** it reads the currently routed provider and adds the
+  equivalent of `-c 'model_provider="<provider>"'`, unless you explicitly
+  supplied your own `model_provider`. This also makes Codex's internal
+  `/resume` keep the routed provider.
+- **VS Code app-server mode:** it proxies JSON-RPC to the real Codex executable
+  and injects `modelProvider` into `thread/start` and `thread/resume` when the
+  extension did not explicitly provide one.
 
-So new CLI sessions, `codex exec`, `codex resume`, internal `/resume`, and reopened VS Code threads all follow the provider chosen by `codex-route` / the watcher.
+So new CLI sessions, `codex exec`, `codex resume`, internal `/resume`, and
+reopened VS Code threads all follow the provider chosen by `codex-route` /
+the watcher.
 
 ## Transparent CLI wrapper
 
@@ -265,7 +274,9 @@ codex exec ...
 codex resume ...
 ```
 
-the wrapper reads the current top-level `model_provider` from `~/.codex/config.toml` and launches the real standalone Codex executable with the equivalent of:
+the wrapper reads the current top-level `model_provider` from
+`~/.codex/config.toml` and launches the real standalone Codex executable with
+the equivalent of:
 
 ```powershell
 -c 'model_provider="<current-provider>"'
@@ -273,7 +284,9 @@ the wrapper reads the current top-level `model_provider` from `~/.codex/config.t
 
 unless you already supplied your own explicit `model_provider` override.
 
-This is deliberately done for **every ordinary Codex launch**, not only `codex resume`. It places the selected provider in Codex's session-level configuration layer. Therefore, if you start:
+This is deliberately done for **every ordinary Codex launch**, not only
+`codex resume`. It places the selected provider in Codex's session-level
+configuration layer. Therefore, if you start:
 
 ```powershell
 codex
@@ -285,13 +298,16 @@ and later type inside the TUI:
 /resume
 ```
 
-Codex's own resume logic sees the provider as an explicit session override and keeps using the provider chosen by `codex-route`, rather than restoring the provider saved in the old thread.
+Codex's own resume logic sees the provider as an explicit session override and
+keeps using the provider chosen by `codex-route`, rather than restoring the
+provider saved in the old thread.
 
 Therefore the intended user model is simple:
 
 1. `codex-route` / the watcher selects `openai` or `openai-api`;
 2. use `codex` normally;
-3. `codex resume`, internal `/resume`, new CLI sessions, and resumed VS Code threads all use that selected provider.
+3. `codex resume`, internal `/resume`, new CLI sessions, and resumed VS Code
+   threads all use that selected provider.
 
 Examples:
 
@@ -306,7 +322,8 @@ codex exec ...       -> current routed provider
 VS Code reopen       -> current routed provider
 ```
 
-After installation or upgrade, open a **new terminal once** so Windows picks up the revised user PATH.
+After installation or upgrade, open a **new terminal once** so Windows picks up
+the revised user PATH.
 
 Verify with:
 
@@ -321,11 +338,14 @@ codex-provider-status
 ...\AppData\Local\CodexQuotaSwitch\bin\codex.exe
 ```
 
-while `codex-provider-status` also shows the separately recorded path of the real standalone Codex executable.
+while `codex-provider-status` also shows the separately recorded path of the
+real standalone Codex executable.
+
 
 ## VS Code
 
 VS Code is explicitly pointed at the **same** `%LOCALAPPDATA%\CodexQuotaSwitch\bin\codex.exe` facade that the shell uses. This is needed because the extension does not rely on your shell PATH for its Codex executable.
+
 
 The installer uses the extension's `chatgpt.cliExecutable` setting to point at a small local proxy.
 
@@ -348,11 +368,15 @@ codex-vscode-resume
 
 This lists VS Code conversations by title and resumes the selected thread with an explicit provider override.
 
+
 ### Conversation visibility across providers
 
-VS Code may ask `thread/list` with a `modelProviders` filter. Because a conversation is recorded with the provider it originally used, that can hide old subscription conversations while `openai-api` is selected (and vice versa).
+VS Code may ask `thread/list` with a `modelProviders` filter. Because a
+conversation is recorded with the provider it originally used, that can hide
+old subscription conversations while `openai-api` is selected (and vice versa).
 
-The facade therefore rewrites only the VS Code app-server `thread/list` request so:
+The facade therefore rewrites only the VS Code app-server `thread/list` request
+so:
 
 ```json
 "modelProviders": []
@@ -360,7 +384,10 @@ The facade therefore rewrites only the VS Code app-server `thread/list` request 
 
 An empty provider list is defined by Codex as **include all providers**.
 
-This does not modify or migrate rollout files. The historical conversation keeps its original provider metadata. When you actually reopen one, the separate `thread/resume` rewrite supplies the provider currently selected by `codex-route`.
+This does not modify or migrate rollout files. The historical conversation keeps
+its original provider metadata. When you actually reopen one, the separate
+`thread/resume` rewrite supplies the provider currently selected by
+`codex-route`.
 
 So the model is:
 
