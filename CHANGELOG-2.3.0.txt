@@ -1,0 +1,14 @@
+Codex Provider Router 2.3.0
+
+- One facade executable for both CLI and VS Code:
+    %LOCALAPPDATA%\CodexQuotaSwitch\bin\codex.exe
+- The user PATH resolves normal `codex` calls to that facade.
+- VS Code `chatgpt.cliExecutable` points to that same facade.
+- CLI/TUI launches receive the current model_provider as a session-level
+  override unless the caller explicitly supplied one.
+- VS Code app-server traffic continues to inject modelProvider on
+  thread/start and thread/resume.
+- This keeps new sessions, codex exec, codex resume, internal /resume, and
+  reopened VS Code threads aligned with codex-route.
+- Quota watcher, reset tracking, confirmation dialogs, API leases, DPAPI
+  API-key storage and overnight safeguards are unchanged.
