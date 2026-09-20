@@ -1,0 +1,23 @@
+# The installer writes this automatically with the real absolute helper path.
+# Keep your normal ChatGPT provider as the top-level default:
+model_provider = "openai"
+
+[model_providers.openai-api]
+name = "OpenAI API (metered)"
+base_url = "https://api.openai.com/v1"
+wire_api = "responses"
+requires_openai_auth = false
+
+[model_providers.openai-api.auth]
+command = "powershell.exe"
+args = [
+  "-NoLogo",
+  "-NoProfile",
+  "-NonInteractive",
+  "-ExecutionPolicy",
+  "Bypass",
+  "-File",
+  "C:\\Users\\YOURNAME\\AppData\\Local\\CodexQuotaSwitch\\bin\\codex-api-token.ps1"
+]
+timeout_ms = 5000
+refresh_interval_ms = 0
