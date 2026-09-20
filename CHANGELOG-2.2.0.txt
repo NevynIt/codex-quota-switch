@@ -1,0 +1,9 @@
+Codex Provider Router 2.2.0
+
+- CLI wrapper now injects the currently routed model_provider on every ordinary
+  Codex invocation, unless the caller explicitly supplied model_provider.
+- This makes Codex's internal /resume obey codex-route as well.
+- Existing codex resume behavior remains covered.
+- VS Code thread/start and thread/resume provider injection remains unchanged.
+- Quota watcher, DPAPI API-key storage, reset tracking, API leases and
+  unattended-work safeguards are unchanged.
